@@ -1,0 +1,25 @@
+{
+    "name": "neto737/xeoncaptcha",
+    "description": "A simple CAPTCHA system written in PHP",
+    "type": "library",
+    "keywords": ["captcha", "security", "simple", "php"],
+    "license": "GPL-3.0",
+
+    "authors": [
+        {
+            "name": "Neto Melo",
+            "email": "neto737@live.com"
+        }
+    ],
+
+    "autoload": {
+        "psr-4": {
+            "neto737\\": "src/"
+        }
+    },
+
+    "require": {
+        "php": ">=7.0",
+        "ext-gd": "*"
+    }
+}
