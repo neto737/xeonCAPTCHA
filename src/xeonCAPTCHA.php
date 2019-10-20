@@ -146,7 +146,7 @@ class xeonCAPTCHA {
      * @return boolean          Will return TRUE to valid codes and FALSE to invalid codes
      */
     public function validateCAPTCHA($inputCode) {
-        if ((strtoupper($_SESSION[$this->sessionName]) !== trim(strtoupper($inputCode))) || empty($_SESSION[$this->sessionName]) || empty($inputCode)) {
+        if (!isset($_SESSION[$this->sessionName]) || empty($_SESSION[$this->sessionName]) || empty($inputCode) || (strtoupper($_SESSION[$this->sessionName]) !== trim(strtoupper($inputCode)))) {
             return false;
         }
 
