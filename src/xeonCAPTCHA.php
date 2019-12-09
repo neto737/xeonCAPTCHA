@@ -24,7 +24,7 @@ class xeonCAPTCHA {
     const IMG_JPEG = 2;
     const IMG_GIF = 3;
     const IMG_WEBP = 4;
-    
+
     /**
      * Class initialization
      * 
@@ -129,12 +129,12 @@ class xeonCAPTCHA {
                 header('Content-Type: image/gif');
                 imagegif($this->CAPTCHA['image']);
                 break;
-            
+
             case self::IMG_WEBP:
                 header('Content-Type: image/webp');
                 imagewebp($this->CAPTCHA['image']);
                 break;
-            
+
             default:
                 header('Content-Type: image/png');
                 imagepng($this->CAPTCHA['image']);
@@ -154,9 +154,11 @@ class xeonCAPTCHA {
      */
     public function validateCAPTCHA($inputCode) {
         if (!isset($_SESSION[$this->sessionName]) || empty($_SESSION[$this->sessionName]) || empty($inputCode) || (strtoupper($_SESSION[$this->sessionName]) !== trim(strtoupper($inputCode)))) {
+            unset($_SESSION[$this->sessionName]);
             return false;
         }
 
+        unset($_SESSION[$this->sessionName]);
         return true;
     }
 
