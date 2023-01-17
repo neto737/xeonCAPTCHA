@@ -95,7 +95,7 @@ class xeonCAPTCHA {
 
     private function putText($length, $fontSize) {
         for ($i = 0; $i < $length; $i++) {
-            imagettftext($this->CAPTCHA['image'], mt_rand($fontSize - 2, $fontSize), mt_rand(-40, 40), $this->CAPTCHA['pos_x'] * 30, $this->CAPTCHA['pos_y'], imagecolorallocate($this->CAPTCHA['image'], 127, 127, mt_rand(0, 255)), $this->CAPTCHA['font'], substr($this->CAPTCHA['string'], $i, 1));
+            imagettftext($this->CAPTCHA['image'], mt_rand($fontSize - 2, $fontSize), mt_rand(-40, 40), intval($this->CAPTCHA['pos_x'] * 30), $this->CAPTCHA['pos_y'], imagecolorallocate($this->CAPTCHA['image'], 127, 127, mt_rand(0, 255)), $this->CAPTCHA['font'], substr($this->CAPTCHA['string'], $i, 1));
             $this->CAPTCHA['pos_x'] ++;
         }
     }
