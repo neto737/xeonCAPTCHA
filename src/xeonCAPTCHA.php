@@ -18,12 +18,15 @@ namespace neto737;
 
 class xeonCAPTCHA {
 
-    private $CAPTCHA = [];
-
     const IMG_PNG = 1;
     const IMG_JPEG = 2;
     const IMG_GIF = 3;
     const IMG_WEBP = 4;
+
+    protected array $CAPTCHA = [];
+    protected int $imageType;
+    protected bool $mathCAPTCHA;
+    protected string $sessionName;
 
     /**
      * Class initialization
