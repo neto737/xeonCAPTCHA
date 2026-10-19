@@ -6,8 +6,8 @@ A simple CAPTCHA system written in PHP.
 [![Latest Stable Version](https://poser.pugx.org/neto737/xeoncaptcha/version)](https://packagist.org/packages/neto737/xeoncaptcha) [![Total Downloads](https://poser.pugx.org/neto737/xeoncaptcha/downloads)](https://packagist.org/packages/neto737/xeoncaptcha) [![Latest Unstable Version](https://poser.pugx.org/neto737/xeoncaptcha/v/unstable)](//packagist.org/packages/neto737/xeoncaptcha) [![License](https://poser.pugx.org/neto737/xeoncaptcha/license)](https://packagist.org/packages/neto737/xeoncaptcha)
 
 ## Requirements
-- PHP 7.0 or earlier with:
-  - GD
+- PHP 7.4 or later with:
+  - GD (with FreeType support)
 
 ## Installation
 
