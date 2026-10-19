@@ -139,6 +139,9 @@ class xeonCAPTCHA {
     }
 
     protected function output() {
+        header('Cache-Control: no-store, no-cache');
+        header('Pragma: no-cache');
+
         switch ($this->imageType) {
             case self::IMG_JPEG:
                 header('Content-Type: image/jpeg');
