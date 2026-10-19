@@ -86,19 +86,36 @@ class xeonCAPTCHA {
 
     private function generateString($length) {
         if (!$this->mathCAPTCHA) {
-            $this->CAPTCHA['string'] = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
+            $this->CAPTCHA['string'] = substr($this->secureShuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
             $this->CAPTCHA['session'] = $this->CAPTCHA['string'];
         } else {
-            $this->CAPTCHA['number_1'] = rand(0, 10) * rand(1, 3);
-            $this->CAPTCHA['number_2'] = rand(0, 10) * rand(1, 3);
+            $this->CAPTCHA['number_1'] = random_int(0, 10) * random_int(1, 3);
+            $this->CAPTCHA['number_2'] = random_int(0, 10) * random_int(1, 3);
             $this->CAPTCHA['string'] = $this->CAPTCHA['number_1'] . '+' . $this->CAPTCHA['number_2'];
             $this->CAPTCHA['session'] = $this->CAPTCHA['number_1'] + $this->CAPTCHA['number_2'];
         }
     }
 
+    /**
+     * Fisher-Yates shuffle using a cryptographically secure random source
+     *
+     * @param string $string The string to shuffle
+     * @return string        The shuffled string
+     */
+    private function secureShuffle(string $string): string {
+        $chars = str_split($string);
+
+        for ($i = count($chars) - 1; $i > 0; $i--) {
+            $j = random_int(0, $i);
+            [$chars[$i], $chars[$j]] = [$chars[$j], $chars[$i]];
+        }
+
+        return implode('', $chars);
+    }
+
     private function putText($fontSize) {
         for ($i = 0; $i < strlen($this->CAPTCHA['string']); $i++) {
-            imagettftext($this->CAPTCHA['image'], mt_rand($fontSize - 2, $fontSize), mt_rand(-40, 40), intval($this->CAPTCHA['pos_x'] * 30), $this->CAPTCHA['pos_y'], imagecolorallocate($this->CAPTCHA['image'], 127, 127, mt_rand(0, 255)), $this->CAPTCHA['font'], substr($this->CAPTCHA['string'], $i, 1));
+            imagettftext($this->CAPTCHA['image'], random_int($fontSize - 2, $fontSize), random_int(-40, 40), intval($this->CAPTCHA['pos_x'] * 30), $this->CAPTCHA['pos_y'], imagecolorallocate($this->CAPTCHA['image'], 127, 127, random_int(0, 255)), $this->CAPTCHA['font'], substr($this->CAPTCHA['string'], $i, 1));
             $this->CAPTCHA['pos_x'] ++;
         }
     }
@@ -113,10 +130,10 @@ class xeonCAPTCHA {
 
     private function imageEllipse() {
         for ($i = 0; $i < 10; $i++) {
-            $cx = (int) rand(-1 * (110 / 2), 110 + (110 / 2));
-            $cy = (int) rand(-1 * (40 / 2), 40 + (40 / 2));
-            $h = (int) rand(40 / 2, 2 * 40);
-            $w = (int) rand(110 / 2, 2 * 110);
+            $cx = random_int(-1 * intdiv(110, 2), 110 + intdiv(110, 2));
+            $cy = random_int(-1 * intdiv(40, 2), 40 + intdiv(40, 2));
+            $h = random_int(intdiv(40, 2), 2 * 40);
+            $w = random_int(intdiv(110, 2), 2 * 110);
             imageellipse($this->CAPTCHA['image'], $cx, $cy, $w, $h, $this->CAPTCHA['color_DCDEE8']);
         }
     }
