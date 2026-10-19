@@ -4,7 +4,7 @@ include 'vendor/autoload.php';
 
 use neto737\xeonCAPTCHA;
 
-$xeon = new xeonCAPTCHA(xeonCAPTCHA::IMG_PNG, false);
+$xeon = new xeonCAPTCHA(xeonCAPTCHA::IMG_PNG, true);
 
 if (isset($_POST['CAPTCHA'])) {
     $captcha = $_POST['CAPTCHA'];
