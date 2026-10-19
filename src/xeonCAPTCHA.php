@@ -11,7 +11,7 @@
  * @package xeonCAPTCHA
  * @author  Neto Melo <neto737@live.com>
  * @license https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3
- * @version 1.0
+ * @version 1.1.4
  */
 
 namespace neto737;
@@ -31,9 +31,9 @@ class xeonCAPTCHA {
     /**
      * Class initialization
      * 
-     * @param int $imageType        Set your image type (PNG, JPEG or GIF)
+     * @param int $imageType        Set your image type (one of the IMG_* constants: PNG, JPEG, GIF or WebP)
      * @param bool $mathCAPTCHA     Is your CAPTCHA a math CAPTCHA?
-     * @param string $sessionName   Set the default name of xeonCAPTCHA's sessions
+     * @param string $sessionName   Set the session key where xeonCAPTCHA stores the answer
      * @throws \RuntimeException    If GD, FreeType or the chosen image type is not available
      */
     public function __construct(int $imageType, bool $mathCAPTCHA = false, string $sessionName = 'xeonCode') {
@@ -60,15 +60,16 @@ class xeonCAPTCHA {
 
     /**
      * This function will generate your CAPTCHA image with your own preferences
-     * 
+     * and send it to the browser
+     *
      * @param int $width    The width of your CAPTCHA image
      * @param int $height   The height of your CAPTCHA image
-     * @param int $fontSize The fontsize of your CAPTHCA image
-     * @param int $length   The length of characters that will appears in your CAPTCHA image
-     * @param string $font  Set your font, xeonCAPTCHA is default
-     * @param string $bgRGB You can personalize your CAPTCHA image with RGB (example RRR_GGG_BBB
-     * @param int $posY     The Position Y
-     * @return boolean      It will return the image
+     * @param int $fontSize The font size of your CAPTCHA image
+     * @param int $length   The number of characters in your CAPTCHA (ignored for math CAPTCHAs)
+     * @param string $font  The name of a font in the src directory, without the .ttf extension (xeonCAPTCHA is default)
+     * @param string $bgRGB The background color in the RRR_GGG_BBB format (example 255_255_255), white if empty
+     * @param int $posY     The vertical position of the text baseline, in pixels
+     * @return boolean      Returns TRUE after the image has been sent
      * @throws \InvalidArgumentException If $font or $bgRGB is invalid
      */
     public function generateCAPTCHA(int $width, int $height, int $fontSize, int $length = 5, string $font = 'xeonCAPTCHA', string $bgRGB = '', int $posY = 33) {
@@ -240,9 +241,10 @@ class xeonCAPTCHA {
     }
 
     /**
-     * This function will check if user code is correct
-     * 
-     * @param string $inputCode The code to verify if it's valid or not
+     * This function will check if user code is correct. The stored answer is
+     * removed after every check, so each CAPTCHA can only be validated once.
+     *
+     * @param mixed $inputCode  The code to verify (any non-string value is invalid)
      * @return boolean          Will return TRUE to valid codes and FALSE to invalid codes
      */
     public function validateCAPTCHA($inputCode) {
