@@ -10,7 +10,7 @@
  *
  * @package xeonCAPTCHA
  * @author  Neto Melo <neto737@live.com>
- * @license https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3
+ * @license https://opensource.org/licenses/MIT MIT License
  * @version 1.1.4
  */
 
