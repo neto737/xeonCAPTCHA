@@ -31,10 +31,14 @@ use neto737\xeonCAPTCHA;
 Or if put the following in your `composer.json`:
 
 ```json
-"neto737/xeoncaptcha": "*"
+"neto737/xeoncaptcha": "^1.1"
 ```
   
 ## Example
+
+### Displaying the CAPTCHA
+
+Create a script (for example `captcha.php`) that outputs the image:
 
 ```php
 require 'vendor/autoload.php';
@@ -44,9 +48,38 @@ use neto737\xeonCAPTCHA;
 //If you set the second variable as true your CAPTCHA will be a math CAPTCHA
 $xeon = new xeonCAPTCHA(xeonCAPTCHA::IMG_PNG, false);
 
-//This function will return an image
+//This function sends the image to the browser
 $xeon->generateCAPTCHA(155, 30, 20, 5, 'xeonCAPTCHA', '', 22);
 ```
+
+Then show it in your form:
+
+```html
+<form method="POST" action="submit.php">
+    <img src="captcha.php" alt="CAPTCHA">
+    <input type="text" name="CAPTCHA">
+    <button type="submit">Send</button>
+</form>
+```
+
+### Validating the answer
+
+```php
+require 'vendor/autoload.php';
+
+use neto737\xeonCAPTCHA;
+
+//If you set a custom session name when generating the image, use the same one here
+$xeon = new xeonCAPTCHA(xeonCAPTCHA::IMG_PNG, false);
+
+if ($xeon->validateCAPTCHA($_POST['CAPTCHA'] ?? '')) {
+    //Correct answer
+} else {
+    //Wrong answer
+}
+```
+
+Each CAPTCHA can only be validated once: the answer is removed from the session after every check, whether it was correct or not.
 
 ## Credits
 - <a href="https://github.com/neto737" target="_blank">Neto Melo</a>
