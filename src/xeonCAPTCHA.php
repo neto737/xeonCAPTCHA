@@ -156,13 +156,21 @@ class xeonCAPTCHA {
      * @return boolean          Will return TRUE to valid codes and FALSE to invalid codes
      */
     public function validateCAPTCHA($inputCode) {
-        if (!isset($_SESSION[$this->sessionName]) || empty($_SESSION[$this->sessionName]) || empty($inputCode) || (strtoupper($_SESSION[$this->sessionName]) !== trim(strtoupper($inputCode)))) {
-            unset($_SESSION[$this->sessionName]);
+        $expectedCode = $_SESSION[$this->sessionName] ?? null;
+        unset($_SESSION[$this->sessionName]);
+
+        if (!is_string($inputCode) || (!is_string($expectedCode) && !is_int($expectedCode))) {
             return false;
         }
 
-        unset($_SESSION[$this->sessionName]);
-        return true;
+        $expectedCode = strtoupper((string) $expectedCode);
+        $inputCode = strtoupper(trim($inputCode));
+
+        if ($expectedCode === '' || $inputCode === '') {
+            return false;
+        }
+
+        return hash_equals($expectedCode, $inputCode);
     }
 
 }
