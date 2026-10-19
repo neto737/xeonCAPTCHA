@@ -34,14 +34,23 @@ class xeonCAPTCHA {
      * @param int $imageType        Set your image type (PNG, JPEG or GIF)
      * @param bool $mathCAPTCHA     Is your CAPTCHA a math CAPTCHA?
      * @param string $sessionName   Set the default name of xeonCAPTCHA's sessions
+     * @throws \RuntimeException    If GD, FreeType or the chosen image type is not available
      */
     public function __construct(int $imageType, bool $mathCAPTCHA = false, string $sessionName = 'xeonCode') {
         $this->imageType = $imageType;
         $this->mathCAPTCHA = $mathCAPTCHA;
         $this->sessionName = $sessionName;
 
-        if (!extension_loaded('gd') && !function_exists('gd_info')) {
-            return false;
+        if (!extension_loaded('gd') || !function_exists('imagetypes')) {
+            throw new \RuntimeException('xeonCAPTCHA requires the GD extension.');
+        }
+
+        if (!function_exists('imagettftext')) {
+            throw new \RuntimeException('xeonCAPTCHA requires GD with FreeType support.');
+        }
+
+        if (!$this->isImageTypeSupported($imageType)) {
+            throw new \RuntimeException('The chosen image type is not supported by your GD installation.');
         }
 
         if (session_status() === PHP_SESSION_NONE) {
@@ -135,6 +144,22 @@ class xeonCAPTCHA {
             $h = random_int(intdiv(40, 2), 2 * 40);
             $w = random_int(intdiv(110, 2), 2 * 110);
             imageellipse($this->CAPTCHA['image'], $cx, $cy, $w, $h, $this->CAPTCHA['color_DCDEE8']);
+        }
+    }
+
+    private function isImageTypeSupported(int $imageType): bool {
+        switch ($imageType) {
+            case self::IMG_JPEG:
+                return (imagetypes() & \IMG_JPG) !== 0;
+
+            case self::IMG_GIF:
+                return (imagetypes() & \IMG_GIF) !== 0;
+
+            case self::IMG_WEBP:
+                return (imagetypes() & \IMG_WEBP) !== 0;
+
+            default:
+                return (imagetypes() & \IMG_PNG) !== 0;
         }
     }
 
