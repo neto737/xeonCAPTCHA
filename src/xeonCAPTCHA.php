@@ -230,7 +230,13 @@ class xeonCAPTCHA {
     }
 
     private function cleanUp() {
-        imagedestroy($this->CAPTCHA['image']);
+        // Since PHP 8.0 images are GdImage objects that are freed automatically,
+        // and imagedestroy() is deprecated as of PHP 8.5
+        if (PHP_VERSION_ID < 80000) {
+            imagedestroy($this->CAPTCHA['image']);
+        }
+
+        unset($this->CAPTCHA['image']);
     }
 
     /**
