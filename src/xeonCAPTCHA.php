@@ -69,20 +69,23 @@ class xeonCAPTCHA {
      * @param string $bgRGB You can personalize your CAPTCHA image with RGB (example RRR_GGG_BBB
      * @param int $posY     The Position Y
      * @return boolean      It will return the image
+     * @throws \InvalidArgumentException If $font or $bgRGB is invalid
      */
     public function generateCAPTCHA(int $width, int $height, int $fontSize, int $length = 5, string $font = 'xeonCAPTCHA', string $bgRGB = '', int $posY = 33) {
+        $fontPath = $this->resolveFont($font);
+        $bgColor = $this->parseRGB($bgRGB);
+
         $this->CAPTCHA['image'] = imagecreatetruecolor($width, $height);
         $this->generateString($length);
-        $this->CAPTCHA['font'] = __DIR__ . '/' . $font . '.ttf';
-        $this->CAPTCHA['bg_color'] = explode('_', $bgRGB);
-        $this->CAPTCHA['color_FFF'] = imagecolorallocate($this->CAPTCHA['image'], 255, 255, 255);
+        $this->CAPTCHA['font'] = $fontPath;
+        $this->CAPTCHA['bg_color'] = $bgColor;
         $this->CAPTCHA['color_DCDEE8'] = imagecolorallocate($this->CAPTCHA['image'], 220, 222, 232);
         $this->CAPTCHA['pos_x'] = 0.1;
         $this->CAPTCHA['pos_y'] = $posY;
 
         $_SESSION[$this->sessionName] = $this->CAPTCHA['session']; // SET SESSION DATA
 
-        $this->captchaRGB($bgRGB, $width, $height); // SET THE IMAGE BACKGROUND COLOR
+        $this->captchaRGB($width, $height); // SET THE IMAGE BACKGROUND COLOR
 
         $this->putText($fontSize); // PUT THE TEXT INTO THE IMAGE
 
@@ -91,6 +94,46 @@ class xeonCAPTCHA {
         self::output();
         self::cleanUp();
         return true;
+    }
+
+    /**
+     * Returns the path of a font bundled with xeonCAPTCHA
+     *
+     * @param string $font The font name, without path or extension
+     * @return string      The path of the font file
+     * @throws \InvalidArgumentException If the font name is not a plain name or the font does not exist
+     */
+    private function resolveFont(string $font): string {
+        if (!preg_match('/^[A-Za-z0-9_-]+$/', $font)) {
+            throw new \InvalidArgumentException('The font must be a plain font name, without a path or extension.');
+        }
+
+        $fontPath = __DIR__ . '/' . $font . '.ttf';
+
+        if (!is_file($fontPath)) {
+            throw new \InvalidArgumentException(sprintf('The font "%s" was not found.', $font));
+        }
+
+        return $fontPath;
+    }
+
+    /**
+     * Parses a background colour in the RRR_GGG_BBB format
+     *
+     * @param string $bgRGB The colour, for example 255_255_255, or an empty string for white
+     * @return int[]        The red, green and blue values
+     * @throws \InvalidArgumentException If the colour is not in the RRR_GGG_BBB format
+     */
+    private function parseRGB(string $bgRGB): array {
+        if ($bgRGB === '') {
+            return [255, 255, 255];
+        }
+
+        if (!preg_match('/^(\d{1,3})_(\d{1,3})_(\d{1,3})$/', $bgRGB, $matches) || max($matches[1], $matches[2], $matches[3]) > 255) {
+            throw new \InvalidArgumentException('The background colour must be in the RRR_GGG_BBB format, with values from 0 to 255.');
+        }
+
+        return [(int) $matches[1], (int) $matches[2], (int) $matches[3]];
     }
 
     private function generateString($length) {
@@ -129,12 +172,8 @@ class xeonCAPTCHA {
         }
     }
 
-    private function captchaRGB($bgRGB, $width, $height) {
-        if (strlen($bgRGB) > 0) {
-            imagefilledrectangle($this->CAPTCHA['image'], 0, 0, $width, $height, imagecolorallocate($this->CAPTCHA['image'], $this->CAPTCHA['bg_color'][0], $this->CAPTCHA['bg_color'][1], $this->CAPTCHA['bg_color'][2]));
-        } else {
-            imagefilledrectangle($this->CAPTCHA['image'], 0, 0, $width, $height, $this->CAPTCHA['color_FFF']);
-        }
+    private function captchaRGB($width, $height) {
+        imagefilledrectangle($this->CAPTCHA['image'], 0, 0, $width, $height, imagecolorallocate($this->CAPTCHA['image'], $this->CAPTCHA['bg_color'][0], $this->CAPTCHA['bg_color'][1], $this->CAPTCHA['bg_color'][2]));
     }
 
     private function imageEllipse() {
